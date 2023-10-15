@@ -1,0 +1,188 @@
+CREATE TABLE alimentos (
+    alimentos_id       INTEGER NOT NULL,
+    alimentos_qtde     INTEGER CHECK (alimentos_qtde >= 0),
+    alimentos_peso     INTEGER CHECK (alimentos_peso >= 0),
+    alimentos_validade INTEGER CHECK (alimentos_validade >= 0),
+    restaurante_fk_id  INTEGER NOT NULL
+);
+
+ 
+
+ALTER TABLE alimentos ADD CONSTRAINT alimentos_pk PRIMARY KEY ( alimentos_id );
+
+ 
+
+CREATE TABLE centro_caridade (
+    centro_caridade_id               INTEGER NOT NULL,
+    centro_caridade_nome             VARCHAR2(255),
+    centro_caridade_cep              INTEGER CHECK (centro_caridade_cep >= 0),
+    site_x_site_x_id                     VARCHAR2(255) NOT NULL, 
+    veiculo_transp_veiculo_transp_id INTEGER NOT NULL
+);
+
+ 
+
+ALTER TABLE centro_caridade ADD CONSTRAINT centro_caridade_pk PRIMARY KEY ( centro_caridade_id );
+
+ 
+
+CREATE TABLE disp_geoloc (
+    disp_geoloc_id          INTEGER NOT NULL,
+    disp_geoloc_coordenadas INTEGER CHECK (disp_geoloc_coordenadas IS NOT NULL)
+);
+
+ 
+
+ALTER TABLE disp_geoloc ADD CONSTRAINT disp_geoloc_pk PRIMARY KEY ( disp_geoloc_id );
+
+ 
+
+CREATE TABLE restaurante (
+    restaurante_id    INTEGER NOT NULL,
+    restaurante_cep   INTEGER CHECK (restaurante_cep >= 0),
+    restaurante_nome  VARCHAR2(255),
+    disp_geoloc_fk_id INTEGER NOT NULL,
+    site_x_fk_id        VARCHAR2(255) NOT NULL
+);
+
+ 
+
+ALTER TABLE restaurante ADD CONSTRAINT restaurante_pk PRIMARY KEY ( restaurante_id );
+
+ 
+
+CREATE TABLE site_x (
+    site_x_id            VARCHAR2(255) NOT NULL,
+    site_x_num_acessos   INTEGER CHECK (site_x_num_acessos >= 0) ,
+    site_x_qtd_registros INTEGER CHECK ("site_x_qtd_registros >= 0)
+);
+
+ 
+
+ALTER TABLE site_x ADD CONSTRAINT site_x_pk PRIMARY KEY ( site_x_id );
+
+ 
+
+CREATE TABLE transportadora (
+    transportadora_id       INTEGER NOT NULL,
+    transportadora_cep      INTEGER CHECK (transportadora_cep >= 0),
+    transportadora_telefone INTEGER NOT NULL,
+    transportadora_nome     VARCHAR2(255)
+);
+
+ 
+
+ALTER TABLE transportadora ADD CONSTRAINT transportadora_pk PRIMARY KEY ( transportadora_id );
+
+ 
+
+CREATE TABLE veiculo_transp (
+    veiculo_transp_id           INTEGER NOT NULL,
+    veiculo_transp_marca        VARCHAR2(255),
+    veiculo_transp_placa        VARCHAR2(255),
+    veiculo_transp_modelo       VARCHAR2(255),
+    veiculo_transp_kilometragem INTEGER CHECK (veiculo_transp_kilometragem >= 0),
+    alimentos_fk_id             INTEGER NOT NULL,
+    transportadora_fk_id        INTEGER NOT NULL
+);
+
+ 
+
+--  Adicionando restrições de chave primária (PRIMARY KEY) e restrições de chave estrangeira (FOREIGN KEY) às tabelas existentes.
+ALTER TABLE veiculo_transp ADD CONSTRAINT veiculo_transp_pk PRIMARY KEY ( veiculo_transp_id );
+
+ 
+
+ALTER TABLE alimentos
+    ADD CONSTRAINT alimentos_restaurante_fk FOREIGN KEY ( restaurante_fk_id )
+        REFERENCES restaurante ( restaurante_id );
+
+ 
+
+ALTER TABLE centro_caridade
+    ADD CONSTRAINT centro_caridade_site_x_fk FOREIGN KEY ( site_x_site_x_id )
+        REFERENCES site_x ( site_x_id );
+
+ 
+
+ALTER TABLE centro_caridade
+    ADD CONSTRAINT centro_caridade_veiculo_transp_fk FOREIGN KEY ( veiculo_transp_veiculo_transp_id )
+        REFERENCES veiculo_transp ( veiculo_transp_id );
+
+ 
+
+ALTER TABLE restaurante
+    ADD CONSTRAINT restaurante_disp_geoloc_fk FOREIGN KEY ( disp_geoloc_fk_id )
+        REFERENCES disp_geoloc ( disp_geoloc_id );
+
+ 
+
+ALTER TABLE restaurante
+    ADD CONSTRAINT restaurante_site_x_fk FOREIGN KEY ( site_x_fk_id )
+        REFERENCES site_x ( site_x_id );
+
+ 
+
+ALTER TABLE veiculo_transp
+    ADD CONSTRAINT veiculo_transp_alimentos_fk FOREIGN KEY ( alimentos_fk_id )
+        REFERENCES alimentos ( alimentos_id );
+
+ 
+
+ALTER TABLE veiculo_transp
+    ADD CONSTRAINT veiculo_transp_transportadora_fk FOREIGN KEY ( transportadora_fk_id )
+        REFERENCES transportadora ( transportadora_id );
+
+
+ 
+
+-- Inserts para tabela site_x
+INSERT INTO site_x (site_x_id, site_x_num_acessos, site_x_qtd_registros)
+VALUES ('site_x', 1000, 500);
+
+ 
+
+-- Inserts para tabela "disp_geoloc"
+INSERT INTO disp_geoloc (disp_geoloc_id, disp_geoloc_coordenadas)
+VALUES (1, 123456);
+
+ 
+
+-- Inserts para tabela "restaurante"
+INSERT INTO restaurante (restaurante_id, restaurante_cep, restaurante_nome, disp_geoloc_fk_id, site_x_fk_id)
+VALUES (1, 54321, 'Restaurante A', 1, 'site_x');
+
+ 
+
+-- Inserts para tabela "alimentos"
+INSERT INTO alimentos (alimentos_id, alimentos_qtde, alimentos_peso, alimentos_validade, restaurante_fk_id)
+VALUES (1, 100, 200, 20231231, 1);
+
+ 
+
+-- Inserts para tabela "transportadora"
+INSERT INTO transportadora (transportadora_id, transportadora_cep, transportadora_telefone, transportadora_nome)
+VALUES (1, 98765, 123456789, 'Transportadora A');
+
+ 
+
+-- Inserts para tabela "veiculo_transp"
+INSERT INTO veiculo_transp (veiculo_transp_id, veiculo_transp_marca, veiculo_transp_placa, veiculo_transp_modelo, veiculo_transp_kilometragem, alimentos_fk_id, transportadora_fk_id)
+VALUES (1, 'Marca A', 'ABC1234', 'Modelo A', 50000, 1, 1);
+
+ 
+
+-- Inserts para tabela "centro_caridade"
+INSERT INTO centro_caridade (centro_caridade_id, centro_caridade_nome, centro_caridade_cep, site_x_site_x_id, veiculo_transp_veiculo_transp_id)
+VALUES (1, 'Centro de Caridade A', 12345, 'site_x', 1);
+
+ 
+
+
+select * from ALIMENTOS,
+select * from CENTRO_CARIDADE,
+select * from DISP_GEOLOC,
+select * from RESTAURANTE,
+select * from site_x,
+select * from TRANSPORTADORA,
+select * from VEICULO_TRANSP
